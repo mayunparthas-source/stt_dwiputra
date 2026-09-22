@@ -30,12 +30,10 @@ RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache \
     && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Disable all conflicting MPM modules from mods-enabled and mods-available, then enable prefork
-RUN rm -f /etc/apache2/mods-enabled/mpm_event.* \
-    && rm -f /etc/apache2/mods-enabled/mpm_worker.* \
-    && a2dismod -f mpm_event mpm_worker \
+# Hapus seluruh modul MPM lalu pasang mpm_prefork secara bersih
+RUN rm -f /etc/apache2/mods-enabled/mpm_*.load /etc/apache2/mods-enabled/mpm_*.conf \
     && a2enmod mpm_prefork
 
 # Expose port 80 and start Apache
 EXPOSE 80
-CMD ["apache2-foreground"]
+CMD ["apache2ctl", "-D", "FOREGROUND"]
